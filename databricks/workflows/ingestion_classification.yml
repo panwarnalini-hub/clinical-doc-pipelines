@@ -1,0 +1,36 @@
+# Databricks Workflow: Ingestion & Classification Pipeline
+#
+# DAG: bronze -> silver (structure) -> silver (embed) -> silver (classify) -> gold
+#
+# Schedule: Daily or on new document upload
+
+name: ingestion_classification_pipeline
+
+tasks:
+  - task_key: bronze_extraction
+    notebook_task:
+      notebook_path: /Repos/clinical-doc-pipelines/ingestion_classification/bronze/01_document_extraction
+    
+  - task_key: silver_structure
+    depends_on:
+      - task_key: bronze_extraction
+    notebook_task:
+      notebook_path: /Repos/clinical-doc-pipelines/ingestion_classification/silver/02_structure_sections
+
+  - task_key: silver_embeddings
+    depends_on:
+      - task_key: silver_structure
+    notebook_task:
+      notebook_path: /Repos/clinical-doc-pipelines/ingestion_classification/silver/03a_embeddings
+
+  - task_key: silver_classification
+    depends_on:
+      - task_key: silver_embeddings
+    notebook_task:
+      notebook_path: /Repos/clinical-doc-pipelines/ingestion_classification/silver/03b_classification
+
+  - task_key: gold_output
+    depends_on:
+      - task_key: silver_classification
+    notebook_task:
+      notebook_path: /Repos/clinical-doc-pipelines/ingestion_classification/gold/04_classified_sections

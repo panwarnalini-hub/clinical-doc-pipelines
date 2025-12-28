@@ -1,0 +1,21 @@
+# Databricks Workflow: NER Extraction Pipeline
+#
+# DAG: gold_classified_sections (from classification) -> silver (NER) -> gold (entities)
+#
+# Schedule: Triggered after ingestion_classification completes
+# Dependency: Requires ingestion_classification/gold output
+
+name: extraction_ner_pipeline
+
+tasks:
+  - task_key: silver_apply_ner
+    notebook_task:
+      notebook_path: /Repos/clinical-doc-pipelines/extraction_ner/silver/01_apply_ner
+    # Input: gold_classified_sections from classification pipeline
+
+  - task_key: gold_entities
+    depends_on:
+      - task_key: silver_apply_ner
+    notebook_task:
+      notebook_path: /Repos/clinical-doc-pipelines/extraction_ner/gold/02_write_entities
+    # Output: gold_clinical_entities
