@@ -102,7 +102,7 @@ Two composable pipelines that process clinical trial protocols:
 
 ### Visualization
 
-![NER Results](extraction_ner/outputs/ner_visualization.html)
+![NER Results](extraction_ner/outputs/ner_visualization.png)
 
 ## Project Structure
 

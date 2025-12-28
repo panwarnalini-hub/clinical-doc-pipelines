@@ -45,3 +45,13 @@ extraction_ner/models/sapbert_ner/checkpoint-*/
 extraction_ner/models/sapbert_ner/checkpoint-*/
 **/checkpoint-*/
 *.pt
+
+# Allow NER visualization
+!extraction_ner/outputs/ner_visualization.html
+
+# Allow visualization images
+!extraction_ner/outputs/*.png
+
+# Allow visualization images
+!extraction_ner/outputs/*.png
+!ingestion_classification/outputs/*.png
