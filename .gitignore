@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.so
+.eggs/
+*.egg-info/
+*.egg
+
+# Environments
+.env
+.venv
+env/
+venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Models (too large for git)
+**/models/sapbert_ner/final/
+**/models/*.bin
+**/models/*.safetensors
+
+# Data
+**/data/raw/*.json
+**/data/processed/*.json
+
+# Outputs
+**/outputs/*.html
+
+# Databricks
+.databricks/
+
+# OS
+.DS_Store
+Thumbs.db
+
+extraction_ner/models/sapbert_ner/checkpoint-*/
+
+# Model checkpoints (large files)
+extraction_ner/models/sapbert_ner/checkpoint-*/
+**/checkpoint-*/
+*.pt
