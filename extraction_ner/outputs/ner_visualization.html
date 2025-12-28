@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinical Trial NER - Results</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: #f8f9fa;
+            color: #2d3436;
+        }
+        h1 { text-align: center; color: #2d3436; margin-bottom: 10px; }
+        .subtitle { text-align: center; color: #636e72; margin-bottom: 40px; }
+        .metrics {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        .metric {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .metric-value { font-size: 2em; font-weight: bold; color: #0984e3; }
+        .metric-label { color: #636e72; font-size: 0.9em; }
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.9em; }
+        .legend-color { width: 20px; height: 20px; border-radius: 4px; }
+        .example {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .example-label { font-size: 0.8em; color: #636e72; margin-bottom: 10px; }
+        .example-text { font-size: 1.1em; line-height: 2; }
+        .entity {
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+            white-space: nowrap;
+        }
+        .entity-label {
+            font-size: 0.7em;
+            font-weight: bold;
+            margin-left: 5px;
+            vertical-align: super;
+            opacity: 0.8;
+        }
+        .footer { text-align: center; margin-top: 50px; color: #636e72; font-size: 0.9em; }
+        .tech-stack {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .tech-badge { background: #e9ecef; padding: 5px 12px; border-radius: 15px; font-size: 0.85em; }
+    </style>
+</head>
+<body>
+    <h1>Clinical Trial NER</h1>
+    <p class="subtitle">Named Entity Recognition for Clinical Trial Protocols</p>
+    
+    <div class="metrics">
+        <div class="metric">
+            <div class="metric-value">74.1%</div>
+            <div class="metric-label">F1 Score</div>
+        </div>
+        <div class="metric">
+            <div class="metric-value">76.5%</div>
+            <div class="metric-label">Precision</div>
+        </div>
+        <div class="metric">
+            <div class="metric-value">73.8%</div>
+            <div class="metric-label">Recall</div>
+        </div>
+        <div class="metric">
+            <div class="metric-value">8</div>
+            <div class="metric-label">Entity Types</div>
+        </div>
+    </div>
+    
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background-color: #ff6b6b"></div><span>CONDITION</span></div>
+<div class="legend-item"><div class="legend-color" style="background-color: #4ecdc4"></div><span>DRUG</span></div>
+<div class="legend-item"><div class="legend-color" style="background-color: #45b7d1"></div><span>DOSAGE</span></div>
+<div class="legend-item"><div class="legend-color" style="background-color: #96ceb4"></div><span>STUDY_PHASE</span></div>
+<div class="legend-item"><div class="legend-color" style="background-color: #ffeaa7"></div><span>ENDPOINT</span></div>
+<div class="legend-item"><div class="legend-color" style="background-color: #dfe6e9"></div><span>PATIENT_CRITERIA</span></div>
+<div class="legend-item"><div class="legend-color" style="background-color: #a29bfe"></div><span>BIOMARKER</span></div>
+<div class="legend-item"><div class="legend-color" style="background-color: #fd79a8"></div><span>ENDPOINT_TYPE</span></div>
+    </div>
+    
+    
+            <div class="example">
+                <div class="example-label">Example 1</div>
+                <div class="example-text">Patients with <span class="entity" style="background-color: #ff6b6b">metastatic breast cancer<span class="entity-label">CONDITION</span></span> will receive <span class="entity" style="background-color: #4ecdc4">Pembrolizumab<span class="entity-label">DRUG</span></span> <span class="entity" style="background-color: #45b7d1">200mg IV every<span class="entity-label">DOSAGE</span></span> 3 weeks.</div>
+            </div>
+            
+            <div class="example">
+                <div class="example-label">Example 2</div>
+                <div class="example-text">This <span class="entity" style="background-color: #96ceb4">Phase III<span class="entity-label">STUDY_PHASE</span></span> trial evaluates <span class="entity" style="background-color: #ffeaa7">Overall<span class="entity-label">ENDPOINT</span></span> Survival in HER2-negative patients.</div>
+            </div>
+            
+            <div class="example">
+                <div class="example-label">Example 3</div>
+                <div class="example-text"><span class="entity" style="background-color: #dfe6e9">Inclusion: Age >= 18 years, ECOG performance status 0-2, signed informed consent.<span class="entity-label">PATIENT_CRITERIA</span></span></div>
+            </div>
+            
+            <div class="example">
+                <div class="example-label">Example 4</div>
+                <div class="example-text"><span class="entity" style="background-color: #fd79a8">Primary<span class="entity-label">ENDPOINT_TYPE</span></span> endpoint: <span class="entity" style="background-color: #ffeaa7">Progression-Free Survival (PFS)<span class="entity-label">ENDPOINT</span></span> at 12 months.</div>
+            </div>
+            
+            <div class="example">
+                <div class="example-label">Example 5</div>
+                <div class="example-text"><span class="entity" style="background-color: #4ecdc4">Durvalumab combined with Carboplatin<span class="entity-label">DRUG</span></span> for advanced NSCLC treatment.</div>
+            </div>
+            
+            <div class="example">
+                <div class="example-label">Example 6</div>
+                <div class="example-text"><span class="entity" style="background-color: #dfe6e9">Exclusion: Prior treatment with checkpoint inhibitors or immunotherapy.<span class="entity-label">PATIENT_CRITERIA</span></span></div>
+            </div>
+            
+            <div class="example">
+                <div class="example-label">Example 7</div>
+                <div class="example-text"><span class="entity" style="background-color: #96ceb4">Phase I dose escalation study<span class="entity-label">STUDY_PHASE</span></span> of <span class="entity" style="background-color: #4ecdc4">pembrolizumab<span class="entity-label">DRUG</span></span> in solid tumors.</div>
+            </div>
+            
+            <div class="example">
+                <div class="example-label">Example 8</div>
+                <div class="example-text">Secondary endpoints include <span class="entity" style="background-color: #ffeaa7">Duration of Response (DOR)<span class="entity-label">ENDPOINT</span></span> and <span class="entity" style="background-color: #ffeaa7">Disease Control Rate (DCR).<span class="entity-label">ENDPOINT</span></span></div>
+            </div>
+            
+    
+    <div class="footer">
+        <p><strong>Model:</strong> Fine-tuned SapBERT with class weighting</p>
+        <p><strong>Training Data:</strong> 100 annotated clinical trial sentences</p>
+        <div class="tech-stack">
+            <span class="tech-badge">SapBERT</span>
+            <span class="tech-badge">PyTorch</span>
+            <span class="tech-badge">HuggingFace</span>
+            <span class="tech-badge">Label Studio</span>
+            <span class="tech-badge">ClinicalTrials.gov</span>
+        </div>
+        <p style="margin-top: 20px;">Built by Nalini Panwar | December 2025</p>
+    </div>
+</body>
+</html>

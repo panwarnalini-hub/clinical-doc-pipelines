@@ -8,7 +8,7 @@ SECTION_CATEGORIES = [
     "Exclusion Criteria", 
     "Primary Endpoint",
     "Secondary Endpoint",
-    # ... 109 total categories
+    # ... 87 total categories
 ]
 
 # NER entity types (extraction_ner)

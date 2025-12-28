@@ -10,8 +10,8 @@
 # WHAT THIS NOTEBOOK DOES:
 #   Generate embeddings from silver_sections and write to a new embeddings table.
 #   Different models for different content types:
-#   - SapBERT: headings (optimized for biomedical entity names/titles)
-#   - PubMedBERT: narrative content (optimized for biomedical text)
+#   - SapBERT: headings (optimized for clinical entity names/titles)
+#   - PubMedBERT: narrative content (optimized for clinical text)
 #
 # WHY TWO MODELS:
 #   Headings are short, entity-like strings ("Adverse Events", "Dosage and Administration")
@@ -565,12 +565,12 @@ display(spark.sql(f"""
 # MAGIC
 # MAGIC ## Models Used:
 # MAGIC - **SapBERT** (`cambridgeltl/SapBERT-from-PubMedBERT-fulltext`): 
-# MAGIC   Self-alignment pre-training for biomedical entity representations.
+# MAGIC   Self-alignment pre-training for clinical entity representations.
 # MAGIC   Optimized for short, entity-like text (headings, titles, concepts).
 # MAGIC   
 # MAGIC - **PubMedBERT** (`microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext`):
 # MAGIC   Pre-trained on PubMed abstracts and PMC full-text articles.
-# MAGIC   Optimized for biomedical narrative text understanding.
+# MAGIC   Optimized for clinical narrative text understanding.
 
 # COMMAND ----------
 

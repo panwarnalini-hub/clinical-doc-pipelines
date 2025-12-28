@@ -25,7 +25,7 @@ STRUCTURE = {
                 "__init__.py": "",
                 "02_structure_sections.py": "# Silver: Structured sections from documents",
                 "03a_embeddings.py": "# Silver: SapBERT embeddings generation",
-                "03b_classification.py": "# Silver: Section classification (109 categories)"
+                "03b_classification.py": "# Silver: Section classification (87 categories)"
             },
             "gold": {
                 "__init__.py": "",
@@ -87,7 +87,7 @@ SECTION_CATEGORIES = [
     "Exclusion Criteria", 
     "Primary Endpoint",
     "Secondary Endpoint",
-    # ... 109 total categories
+    # ... 87 total categories
 ]
 
 # NER entity types (extraction_ner)

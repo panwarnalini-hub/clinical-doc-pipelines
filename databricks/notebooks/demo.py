@@ -18,7 +18,7 @@
 # MAGIC │   BRONZE          SILVER              SILVER         GOLD   │
 # MAGIC │  ┌───────┐      ┌─────────┐        ┌──────────┐   ┌───────┐│
 # MAGIC │  │ Raw   │─────▶│Structure│───────▶│ Classify │──▶│Sections│
-# MAGIC │  │ Docs  │      │Sections │        │  (109)   │   │ Table ││
+# MAGIC │  │ Docs  │      │Sections │        │  (87)   │   │ Table ││
 # MAGIC │  └───────┘      └─────────┘        └──────────┘   └───┬───┘│
 # MAGIC └───────────────────────────────────────────────────────┼────┘
 # MAGIC                                                         │
@@ -158,7 +158,7 @@ spark.sql(f"USE SCHEMA {SCHEMA}")
 # MAGIC ## Model Performance Summary
 # MAGIC 
 # MAGIC ### Classification Model (SapBERT)
-# MAGIC - **Categories:** 109 biomedical section types
+# MAGIC - **Categories:** 87 clinical section types
 # MAGIC - **Approach:** SapBERT embeddings + cosine similarity
 # MAGIC - **Finding:** SapBERT outperforms dual-model approach by 1.3%
 # MAGIC 

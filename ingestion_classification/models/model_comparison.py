@@ -545,7 +545,7 @@ DUAL MODEL JUSTIFIED
 The dual approach shows +{delta_dual_vs_sap:.1f}% accuracy improvement over SapBERT alone.
 
 Justification:
-- SapBERT excels at short biomedical terms (UMLS-aligned)
+- SapBERT excels at short clinical terms (UMLS-aligned)
 - PubMedBERT adds value for longer narrative sections  
 - 70/30 fusion captures benefits of both
 - Worth the ~2x inference time for {delta_dual_vs_sap:.1f}% accuracy gain
