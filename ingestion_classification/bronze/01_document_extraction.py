@@ -21,7 +21,7 @@
 #
 # PDF (primary document format)
 # DOC / DOCX (authoring source of most PDFs)
-# RTF (Word-compatible text format used in submissions) #the formats John explicitly requested and which align with clinical orgs document workflows.
+# RTF (Word-compatible text format used in submissions) # Standard document formats for clinical organizations
 #
 # PPT and spreadsheets were excluded because they do not contain hierarchical document semantics that downstream intelligence relies on.
 # Extraction stays focused and reliable while I add structural intelligence in the Silver layer.
