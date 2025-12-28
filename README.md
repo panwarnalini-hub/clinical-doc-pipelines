@@ -253,4 +253,4 @@ December 2025
 
 ## License
 
-Portfolio project - not for commercial use.
+MIT License
