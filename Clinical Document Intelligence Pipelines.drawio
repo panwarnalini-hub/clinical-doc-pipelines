@@ -64,7 +64,7 @@
         <mxCell id="35" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=14;fontStyle=0;fontColor=#555;" value="SapBERT Embeddings" vertex="1">
           <mxGeometry height="45" width="240" x="960" y="460" as="geometry" />
         </mxCell>
-        <mxCell id="36" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=14;fontColor=#333;spacingLeft=10;" value="&lt;font&gt;109 Categories&lt;br&gt;ICH-GCP Guidelines&lt;br&gt;Cosine Similarity Matching&lt;/font&gt;" vertex="1">
+        <mxCell id="36" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=14;fontColor=#333;spacingLeft=10;" value="&lt;font&gt;87 Categories&lt;br&gt;ICH-GCP Guidelines&lt;br&gt;Cosine Similarity Matching&lt;/font&gt;" vertex="1">
           <mxGeometry height="60" width="240" x="1240" y="460" as="geometry" />
         </mxCell>
         <mxCell id="37" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontStyle=1;fontColor=#2E7D32;spacingLeft=10;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;Empirical model selection:&lt;br&gt;SapBERT outperformed&lt;br&gt;dual-model by 1.3%&lt;/font&gt;" vertex="1">
@@ -156,7 +156,7 @@
         <mxCell id="74" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=14;fontStyle=0;fontColor=#555;" value="&lt;font&gt;Fine-tuned SapBERT&lt;br&gt;Token Classification&lt;/font&gt;" vertex="1">
           <mxGeometry height="50" width="260" x="700" y="990" as="geometry" />
         </mxCell>
-        <mxCell id="75" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=14;fontColor=#333;spacingLeft=10;" value="8 Entity Types:&#xa;CONDITION, DRUG, DOSAGE,&#xa;PATIENT_CRITERIA, PROCEDURE,&#xa;MEASUREMENT, TIMEPOINT,&#xa;OUTCOME" vertex="1">
+        <mxCell id="75" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=14;fontColor=#333;spacingLeft=10;" value="8 Entity Types:&lt;br&gt;&lt;div&gt;CONDITION, DRUG,&amp;nbsp;&lt;/div&gt;&lt;div&gt;DOSAGE, STUDY_PHASE,&amp;nbsp;&lt;/div&gt;&lt;div&gt;ENDPOINT, PATIENT_CRITERIA,&amp;nbsp;&lt;/div&gt;&lt;div&gt;BIOMARKER, ENDPOINT_TYPE&lt;/div&gt;" vertex="1">
           <mxGeometry height="90" width="240" x="1000" y="920" as="geometry" />
         </mxCell>
         <mxCell id="80" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=5;" value="" vertex="1">
@@ -175,7 +175,7 @@
           <mxGeometry height="65" width="200" x="1480" y="985" as="geometry" />
         </mxCell>
         <mxCell id="85" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;fontSize=11;fontStyle=1;fontColor=#FF6F00;" value="DATA CONTRACT" vertex="1">
-          <mxGeometry height="20" width="160" x="1360" y="920" as="geometry" />
+          <mxGeometry height="20" width="160" x="1340" y="920" as="geometry" />
         </mxCell>
         <mxCell id="86" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=14;fontColor=#333;spacingLeft=5;" value="• Analytics-ready&#xa;• Model-version tagged&#xa;• Unity Catalog governed" vertex="1">
           <mxGeometry height="50" width="160" x="1350" y="940" as="geometry" />
@@ -210,7 +210,7 @@
         <mxCell id="104" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#333;spacingLeft=20;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Classification System&lt;/font&gt;" vertex="1">
           <mxGeometry height="25" width="320" x="2320" y="960" as="geometry" />
         </mxCell>
-        <mxCell id="105" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=14;fontColor=#666;spacingLeft=20;" value="&lt;font&gt;&lt;b&gt;109 categories (ICH-GCP)&lt;br&gt;SapBERT embeddings&lt;/b&gt;&lt;/font&gt;" vertex="1">
+        <mxCell id="105" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=14;fontColor=#666;spacingLeft=20;" value="&lt;font&gt;&lt;b&gt;87 categories (ICH-GCP)&lt;br&gt;SapBERT embeddings&lt;/b&gt;&lt;/font&gt;" vertex="1">
           <mxGeometry height="35" width="320" x="2320" y="985" as="geometry" />
         </mxCell>
         <mxCell id="106" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;fontStyle=1;fontColor=#1976D2;spacingLeft=20;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;Storage: Delta Lake + Unity Catalog&lt;/font&gt;" vertex="1">
