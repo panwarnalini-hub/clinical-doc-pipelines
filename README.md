@@ -8,7 +8,7 @@ Two composable pipelines that process clinical trial protocols:
 
 | Pipeline | Purpose | Output |
 |----------|---------|--------|
-| **Ingestion & Classification** | Extract documents and classify sections | 87 section categories |
+| **Ingestion & Classification** | Extract documents and classify sections | 87 section categories (initial) |
 | **Extraction NER** | Extract named entities from sections | 8 entity types |
 
 ## Architecture
@@ -176,7 +176,7 @@ Source Documents (PDF, DOC, DOCX, RTF)
           │
           ▼
 ┌─────────────────────┐
-│  Silver: Classify   │  Cosine similarity to 87 categories
+│  Silver: Classify   │  Cosine similarity to 87 categories (initial)
 │  sections           │
 └─────────┬───────────┘
           │
