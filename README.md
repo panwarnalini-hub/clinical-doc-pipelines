@@ -1,10 +1,25 @@
 # Clinical Document Intelligence Pipelines
 
+[![PyPI version](https://badge.fury.io/py/docling-extractor.svg)](https://pypi.org/project/docling-extractor/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![Databricks](https://img.shields.io/badge/platform-Databricks-red.svg)](https://databricks.com/)
 
 End-to-end data engineering pipelines for clinical trial document processing using medallion architecture on Databricks.
+
+## Published Package
+
+This project uses my published extraction library:
+
+```bash
+pip install docling-extractor
+```
+
+**docling-extractor** provides production-grade document extraction with intelligent fallback chains (Docling → PyMuPDF → pdfplumber → Tesseract). Available on PyPI for the data engineering community.
+
+ [View on PyPI](https://pypi.org/project/docling-extractor/) |  [Documentation](https://pypi.org/project/docling-extractor/)
+
+---
 
 ## Overview
 
@@ -144,7 +159,7 @@ clinical-doc-pipelines/
 git clone https://github.com/panwarnalini-hub/clinical-doc-pipelines.git
 cd clinical-doc-pipelines
 
-# Install dependencies
+# Install dependencies (includes docling-extractor)
 pip install -r requirements.txt
 
 # Run NER demo
@@ -169,8 +184,8 @@ Source Documents (PDF, DOC, DOCX, RTF)
          │
          ▼
 ┌─────────────────────┐
-│  Bronze: Extract    │  Docling, PyMuPDF, OCR fallback
-│  raw text & tables  │
+│  Bronze: Extract    │  docling-extractor (PyPI package)
+│  raw text & tables  │  Docling → PyMuPDF → pdfplumber → Tesseract
 └─────────┬───────────┘
           │
           ▼
@@ -215,6 +230,8 @@ Source Documents (PDF, DOC, DOCX, RTF)
 This project was independently developed by Nalini Panwar as a demonstration of production-grade data engineering and biomedical NLP capabilities.
 
 All code, architecture decisions, and implementation details are original work completed December 2025.
+
+The document extraction component has been published as an open-source library: [docling-extractor](https://pypi.org/project/docling-extractor/)
 
 ## Author
 
