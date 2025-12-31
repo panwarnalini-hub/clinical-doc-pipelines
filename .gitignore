@@ -1,57 +1,197 @@
-# Python
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-.Python
+
+# C extensions
 *.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
 .eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
 *.egg-info/
+.installed.cfg
 *.egg
+PIPFILE.lock
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# pdm
+.pdm.toml
+
+# PEP 582
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
 
 # Environments
 .env
 .venv
 env/
 venv/
+ENV/
+env.bak/
+venv.bak/
 
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
+# Spyder project settings
+.spyderproject
+.spyproject
 
-# Models (too large for git)
-**/models/sapbert_ner/final/
-**/models/*.bin
-**/models/*.safetensors
+# Rope project settings
+.ropeproject
 
-# Data
-**/data/raw/*.json
-**/data/processed/*.json
+# mkdocs documentation
+/site
 
-# Outputs
-**/outputs/*.html
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# ============================================
+# PROJECT SPECIFIC - Training Data & Models
+# ============================================
+
+# Training data directories
+training/data/annotations/
+training/data/processed/
+training/data/raw/
+
+# Trained model artifacts
+training/models/
+
+# Allow specific model config files
+!training/models/**/id2label.json
+!training/models/**/label2id.json
+!training/models/**/config.json
 
 # Databricks
 .databricks/
 
-# OS
+# OS files
 .DS_Store
 Thumbs.db
+*.swp
+*.swo
+*~
 
-extraction_ner/models/sapbert_ner/checkpoint-*/
+# IDE
+.vscode/
+.idea/
+*.sublime-*
 
-# Model checkpoints (large files)
-extraction_ner/models/sapbert_ner/checkpoint-*/
-**/checkpoint-*/
-*.pt
+# Logs
+*.log
+logs/
 
-# Allow NER visualization
-!extraction_ner/outputs/ner_visualization.html
+# Temporary files
+*.tmp
+*.bak
+.~*
 
-# Allow visualization images
-!extraction_ner/outputs/*.png
+# Data files (general)
+*.csv
+*.parquet
+*.delta
+*.db
 
-# Allow visualization images
-!extraction_ner/outputs/*.png
-!ingestion_classification/outputs/*.png
+# Large files
+*.pdf
+*.zip
+*.tar.gz
+
+# Credentials
+credentials.json
+secrets.json
+*.key
+*.pem
+
+# Allow specific documentation PDFs
+!ingestion_classification/outputs/Model_Comparison_Report.pdf

@@ -1,0 +1,47 @@
+[
+  {
+    "text": "Patients with metastatic breast cancer will receive Pembrolizumab 200mg IV every 3 weeks.",
+    "entities": [
+      {"text": "metastatic breast cancer", "label": "CONDITION", "start": 14, "end": 38},
+      {"text": "Pembrolizumab", "label": "DRUG", "start": 52, "end": 65},
+      {"text": "200mg IV every 3 weeks", "label": "DOSAGE", "start": 66, "end": 88}
+    ]
+  },
+  {
+    "text": "This Phase III trial evaluates Overall Survival in HER2-negative patients.",
+    "entities": [
+      {"text": "Phase III", "label": "STUDY_PHASE", "start": 5, "end": 14},
+      {"text": "Overall Survival", "label": "ENDPOINT", "start": 35, "end": 51},
+      {"text": "HER2-negative", "label": "BIOMARKER", "start": 55, "end": 68}
+    ]
+  },
+  {
+    "text": "Inclusion: Age >= 18 years, ECOG performance status 0-2, signed informed consent.",
+    "entities": [
+      {"text": "Age >= 18 years", "label": "PATIENT_CRITERIA", "start": 11, "end": 26},
+      {"text": "ECOG performance status 0-2", "label": "PATIENT_CRITERIA", "start": 28, "end": 55}
+    ]
+  },
+  {
+    "text": "Primary endpoint: Progression-Free Survival (PFS) at 12 months.",
+    "entities": [
+      {"text": "Primary endpoint", "label": "ENDPOINT_TYPE", "start": 0, "end": 16},
+      {"text": "Progression-Free Survival", "label": "ENDPOINT", "start": 18, "end": 43}
+    ]
+  },
+  {
+    "text": "Durvalumab combined with Carboplatin for advanced NSCLC treatment.",
+    "entities": [
+      {"text": "Durvalumab", "label": "DRUG", "start": 0, "end": 10},
+      {"text": "Carboplatin", "label": "DRUG", "start": 25, "end": 36},
+      {"text": "advanced NSCLC", "label": "CONDITION", "start": 41, "end": 55}
+    ]
+  },
+  {
+    "text": "Exclusion: Prior treatment with checkpoint inhibitors or PD-L1 therapy.",
+    "entities": [
+      {"text": "checkpoint inhibitors", "label": "DRUG", "start": 33, "end": 54},
+      {"text": "PD-L1", "label": "BIOMARKER", "start": 58, "end": 63}
+    ]
+  }
+]

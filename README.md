@@ -1,5 +1,9 @@
 # Clinical Document Intelligence Pipelines
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![Databricks](https://img.shields.io/badge/platform-Databricks-red.svg)](https://databricks.com/)
+
 End-to-end data engineering pipelines for clinical trial document processing using medallion architecture on Databricks.
 
 ## Overview
