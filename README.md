@@ -12,12 +12,14 @@ Two composable pipelines that process clinical trial protocols:
 
 | Pipeline | Purpose | Output |
 |----------|---------|--------|
-| **Ingestion & Classification** | Extract documents and classify sections | 87 section categories (initial) |
+| **Ingestion & Classification** | Extract documents and classify sections | 87 categories (from 167 ICH-GCP categories) |
 | **Extraction NER** | Extract named entities from sections | 8 entity types |
 
-## Architecture
+## Demo
 
-# ![Pipeline Architecture](clinical-pipeline-architecture.png)
+**Live Application:** https://clinical-doc-pipelines-ner.streamlit.app
+
+Interactive demonstration of the NER system with pre-computed results from the fine-tuned model.
 
 ## Key Design Decisions
 
@@ -28,7 +30,7 @@ Two composable pipelines that process clinical trial protocols:
 
 **2. Pipeline Composition**
 - NER pipeline consumes classification output
-- No duplicate ingestion: `ingestion_classification/gold - extraction_ner/bronze`
+- No duplicate ingestion: `ingestion_classification/gold → extraction_ner/bronze`
 
 **3. Training Separation**
 - ML training is not part of the medallion data path
@@ -39,10 +41,15 @@ Two composable pipelines that process clinical trial protocols:
 - SapBERT outperformed SapBERT+PubMedBERT fusion by 1.3%
 - See `ingestion_classification/outputs/Model_Comparison_Report.md`
 
+**5. Category Taxonomy**
+- Full taxonomy: 167 categories from ICH-GCP guidelines
+- Active implementation: 87 categories based on protocol coverage analysis
+- Scalable to additional categories as dataset expands
+
 ## Results
 
 ### Classification Pipeline
-- 87 section categories based on ICH-GCP guidelines
+- 87 categories actively used (167 total from ICH-GCP taxonomy)
 - SapBERT embeddings with cosine similarity matching
 
 ### NER Pipeline
@@ -70,7 +77,6 @@ Two composable pipelines that process clinical trial protocols:
 
 ![NER Results](extraction_ner/outputs/ner_visualization.png)
 
-
 ## Project Structure
 
 ```
@@ -88,7 +94,7 @@ clinical-doc-pipelines/
 │   ├── models/
 │   │   └── model_comparison.py
 │   └── outputs/
-│       └── Model_Comparison_Report.md
+│       ├── Model_Comparison_Report.md
 │       └── Model_Comparison_Report.pdf
 │
 ├── extraction_ner/                  # Pipeline 2: Entity Extraction
@@ -112,6 +118,7 @@ clinical-doc-pipelines/
 │       └── test_ner.py
 │
 ├── app.py                           # Streamlit demo
+├── examples.json                    # Pre-computed NER results for demo
 ├── requirements.txt
 └── README.md
 ```
@@ -158,7 +165,7 @@ databricks jobs run-now --job-id <extraction_ner_job_id>
 ## Data Flow
 
 ```
-Source Documents (PDF, DOC, DOCX, RTF)
+Source Documents (PDF, DOCX)
          │
          ▼
 ┌─────────────────────┐
@@ -180,7 +187,7 @@ Source Documents (PDF, DOC, DOCX, RTF)
           │
           ▼
 ┌─────────────────────┐
-│  Silver: Classify   │  Cosine similarity to 87 categories (initial)
+│  Silver: Classify   │  Cosine similarity (87 of 167 ICH-GCP categories)
 │  sections           │
 └─────────┬───────────┘
           │
@@ -206,7 +213,7 @@ Source Documents (PDF, DOC, DOCX, RTF)
 ## Author
 
 **Nalini Panwar**  
-Lead Technology - Data Engineering  
+Lead Data Engineer  
 December 2025
 
 ## License
