@@ -666,7 +666,7 @@ for doc_id in df_final["document_id"].unique():
             df_final.loc[drop_idx, "category_domain"] = "OTHER"
             df_final.loc[drop_idx, "category_level1"] = "OTHER"
 
-print(f"✓ Deduplication complete")
+print(f"Deduplication complete")
 
 # COMMAND ----------
 
@@ -681,7 +681,7 @@ results_df.write.format("delta").mode("overwrite").option(
     "overwriteSchema", "true"
 ).saveAsTable(config.full_table(config.silver_classifications))
 
-print(f"✓ Written to {config.full_table(config.silver_classifications)}")
+print(f"Written to {config.full_table(config.silver_classifications)}")
 
 # COMMAND ----------
 
@@ -695,7 +695,7 @@ print("CLASSIFICATION SUMMARY")
 print("=" * 60)
 
 # Status distribution
-print("\n📊 STATUS DISTRIBUTION")
+print("\nSTATUS DISTRIBUTION")
 status_counts = spark.sql(f"""
     SELECT classification_status, COUNT(*) as count,
            ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER(), 1) as pct
@@ -706,7 +706,7 @@ status_counts = spark.sql(f"""
 display(status_counts)
 
 # By domain
-print("\n📊 BY DOMAIN")
+print("\nBY DOMAIN")
 domain_counts = spark.sql(f"""
     SELECT category_domain, COUNT(*) as count,
            ROUND(AVG(classification_confidence), 3) as avg_conf
@@ -718,7 +718,7 @@ domain_counts = spark.sql(f"""
 display(domain_counts)
 
 # Top classifications
-print("\n📊 TOP 15 CLASSIFICATIONS")
+print("\nTOP 15 CLASSIFICATIONS")
 top_classes = spark.sql(f"""
     SELECT classification, category_domain, COUNT(*) as count,
            ROUND(AVG(classification_confidence), 3) as avg_conf
@@ -737,7 +737,7 @@ display(top_classes)
 
 # COMMAND ----------
 
-print("\n✓ INCLUSION CRITERIA")
+print("\nINCLUSION CRITERIA")
 inclusion = spark.sql(f"""
     SELECT document_id, section_title, classification_confidence
     FROM {config.full_table(config.silver_classifications)}
@@ -747,7 +747,7 @@ inclusion = spark.sql(f"""
 """)
 display(inclusion)
 
-print("\n✓ EXCLUSION CRITERIA")
+print("\nEXCLUSION CRITERIA")
 exclusion = spark.sql(f"""
     SELECT document_id, section_title, classification_confidence
     FROM {config.full_table(config.silver_classifications)}
@@ -784,7 +784,7 @@ WHEN MATCHED THEN
 """
 
 spark.sql(completion_sql)
-print("✓ Document registry updated")
+print("Document registry updated")
 
 # COMMAND ----------
 

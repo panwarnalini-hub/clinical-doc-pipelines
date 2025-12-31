@@ -1,12 +1,29 @@
+"""
+ClinicalTrials.gov API Testing Script
+
+Purpose: Explore and validate the ClinicalTrials.gov API v2 structure
+         to understand data availability for future enhancements.
+
+Context: This script was used during development to:
+         1. Understand API response structure
+         2. Identify available fields for entity extraction
+         3. Plan potential data expansion beyond the 91 annotated protocols
+
+Status: Exploratory/development script - not part of production pipeline
+
+Output: 
+  - search_response.json (search API structure)
+  - study_response.json (individual study structure)
+"""
+
 import requests
 import json
 
-def test_api_structure():
-    
-    # Test 1: Search API
-    print("="*70)
+def test_search_api():
+    """Test the search API to find trials by condition"""
+    print("=" * 70)
     print("TEST 1: SEARCH API")
-    print("="*70)
+    print("=" * 70)
     
     search_url = "https://clinicaltrials.gov/api/v2/studies"
     search_params = {
@@ -29,14 +46,14 @@ def test_api_structure():
                 json.dump(data, f, indent=2)
             print("Saved full response to: search_response.json")
             
-            # Try to extract NCT IDs
+            # Extract NCT IDs for further queries
             if 'studies' in data:
                 print(f"\nFound 'studies' key with {len(data['studies'])} studies")
                 if len(data['studies']) > 0:
                     first_study = data['studies'][0]
                     print(f"\nFirst study keys: {list(first_study.keys())}")
                     
-                    # Try to get NCT ID
+                    # Navigate to NCT ID
                     if 'protocolSection' in first_study:
                         protocol = first_study['protocolSection']
                         if 'identificationModule' in protocol:
@@ -51,14 +68,16 @@ def test_api_structure():
     
     except Exception as e:
         print(f"Error: {e}")
-    
-    # Test 2: Individual Study API
-    print("\n" + "="*70)
+
+
+def test_individual_study_api():
+    """Test fetching a specific trial by NCT ID"""
+    print("\n" + "=" * 70)
     print("TEST 2: INDIVIDUAL STUDY API")
-    print("="*70)
+    print("=" * 70)
     
-    # Use a known trial ID
-    test_nct_id = "NCT02775435"  # Known pembrolizumab trial
+    # Use a known pembrolizumab trial
+    test_nct_id = "NCT02775435"
     study_url = f"https://clinicaltrials.gov/api/v2/studies/{test_nct_id}"
     
     try:
@@ -74,16 +93,16 @@ def test_api_structure():
                 json.dump(data, f, indent=2)
             print("Saved full response to: study_response.json")
             
-            # Navigate structure
+            # Navigate structure to find key sections
             if 'studies' in data and len(data['studies']) > 0:
                 study = data['studies'][0]
                 print(f"\nStudy keys: {list(study.keys())}")
                 
                 if 'protocolSection' in study:
                     protocol = study['protocolSection']
-                    print(f"\nProtocol Section keys: {list(protocol.keys())[:10]}...")
+                    print(f"\nProtocol Section keys (first 10): {list(protocol.keys())[:10]}")
                     
-                    # Check for description
+                    # Check for description module
                     if 'descriptionModule' in protocol:
                         desc_module = protocol['descriptionModule']
                         print(f"\nDescription Module keys: {list(desc_module.keys())}")
@@ -93,7 +112,7 @@ def test_api_structure():
                             print(f"\nBrief Summary (first 200 chars):")
                             print(summary[:200])
                     
-                    # Check for eligibility
+                    # Check for eligibility criteria
                     if 'eligibilityModule' in protocol:
                         elig_module = protocol['eligibilityModule']
                         print(f"\nEligibility Module keys: {list(elig_module.keys())}")
@@ -103,20 +122,28 @@ def test_api_structure():
                             print(f"\nEligibility Criteria (first 200 chars):")
                             print(criteria[:200])
             else:
-                print("Unexpected structure")
+                print("Unexpected structure - check study_response.json")
         else:
             print(f"Error: {response.status_code}")
             print(response.text[:500])
     
     except Exception as e:
         print(f"Error: {e}")
+
+
+def main():
+    """Run API exploration tests"""
+    test_search_api()
+    test_individual_study_api()
     
-    print("\n" + "="*70)
-    print("DEBUG COMPLETE")
-    print("="*70)
-    print("\nPlease check:")
-    print("1. search_response.json - to see search API structure")
-    print("2. study_response.json - to see individual study structure")
+    print("\n" + "=" * 70)
+    print("API EXPLORATION COMPLETE")
+    print("=" * 70)
+    print("\nGenerated files:")
+    print("1. search_response.json - Search API structure")
+    print("2. study_response.json - Individual study structure")
+    print("\nUse these to understand available fields for entity extraction")
+
 
 if __name__ == "__main__":
-    test_api_structure()
+    main()

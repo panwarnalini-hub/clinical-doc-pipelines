@@ -1,16 +1,16 @@
 # Databricks notebook source
 # MODEL COMPARISON: SapBERT vs Dual-Model (SapBERT + PubMedBERT)
 #
-# PURPOSE: Validate model approach using 91 test protocols with the standard taxonomy
+# PURPOSE: Validate model approach using test protocols with standard clinical taxonomy
 #
-# OUTPUT: Same format as Model_Comparison_Report.pdf
+# OUTPUT: Comprehensive comparison report including:
 #   - Overall Accuracy (with ground truth from extracted headings)
 #   - Accuracy by Case Type (Short/Long/Ambiguous)
 #   - Speed Comparison
 #
-# DATA SOURCE: the team's 91 protocol IDs from the test dataset
-# CATEGORIES: 110 standard categories from Domain_and_Insight_Requirements_Oct_2025.xlsx
-
+# DATA SOURCE: Clinical trial protocols from ClinicalTrials.gov test dataset
+# CATEGORIES: Initial 87 standard categories from biomedical document taxonomy
+# PyMuPDF have been used instead of Dockling because it is faster
 # COMMAND ----------
 
 # MAGIC %md
@@ -24,7 +24,7 @@ from transformers import AutoTokenizer, AutoModel
 from typing import List, Dict, Tuple
 import time
 import pandas as pd
-import fitz  # PyMuPDF
+import fitz  # PyMuPDF 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Device: {device}")
@@ -81,7 +81,8 @@ def embed_dual(texts: List[str], sap_weight: float = 0.7) -> np.ndarray:
 
 # COMMAND ----------
 
-# 110 standard categories from Domain_and_Insight_Requirements_Oct_2025.xlsx
+# 87 initial standard categories from biomedical document taxonomy
+# Please note i'm increasing the categories so the category number might not match
 CATEGORY_DEFINITIONS: Dict[str, List[str]] = {
     # === DEMOGRAPHICS ===
     "GENDER": ["gender", "sex", "male", "female"],
@@ -180,284 +181,221 @@ CATEGORY_DEFINITIONS: Dict[str, List[str]] = {
     "GLUCOSE_RANDOM": ["random glucose", "random blood glucose", "rpg"],
     "GLUCOSE_SELF_MONITORING": ["self-monitoring glucose", "smbg", "fingerstick glucose"],
     "GLUCOSE_THERAPY": ["glucose-lowering therapy", "antidiabetic medication"],
-    "CREATININE": ["creatinine", "serum creatinine", "plasma creatinine"],
-    "CREATININE_CLEARANCE": ["creatinine clearance", "crcl", "cockcroft-gault", "egfr"],
-    "CREATININE_RATIO": ["protein creatinine ratio", "albumin creatinine ratio", "acr"],
+    "HBA1C": ["hba1c", "hemoglobin a1c", "glycated hemoglobin", "a1c"],
+    "HBA1C_TARGET": ["hba1c target", "a1c goal", "glycemic control target"],
+    "CREATININE": ["creatinine", "serum creatinine", "scr"],
+    "CREATININE_CLEARANCE": ["creatinine clearance", "crcl", "cockcroft gault"],
+    "EGFR": ["egfr", "estimated glomerular filtration rate", "gfr"],
+    "EGFR_THRESHOLD": ["egfr threshold", "egfr cutoff", "egfr limit"],
+    "BUN": ["bun", "blood urea nitrogen", "urea"],
+    "ALBUMIN": ["albumin", "serum albumin"],
+    "BILIRUBIN_TOTAL": ["total bilirubin", "tbil"],
+    "BILIRUBIN_DIRECT": ["direct bilirubin", "conjugated bilirubin", "dbil"],
+    "BILIRUBIN_INDIRECT": ["indirect bilirubin", "unconjugated bilirubin"],
+    "ALP": ["alkaline phosphatase", "alp", "alk phos"],
+    "GGT": ["ggt", "gamma-glutamyl transferase", "gamma gt"],
+    "INR": ["inr", "international normalized ratio", "prothrombin time"],
+    "PTT": ["ptt", "aptt", "activated partial thromboplastin time"],
+    "TSH": ["tsh", "thyroid stimulating hormone", "thyrotropin"],
+    "FREE_T4": ["free t4", "ft4", "free thyroxine"],
+    "FREE_T3": ["free t3", "ft3", "free triiodothyronine"],
+    "PSA": ["psa", "prostate specific antigen"],
+    "URINALYSIS": ["urinalysis", "ua", "urine analysis"],
+    "PROTEIN_URINE": ["proteinuria", "urine protein", "protein in urine"],
+    "MICROALBUMIN_URINE": ["microalbuminuria", "urine albumin", "albumin creatinine ratio"],
     
-    # === ASSESSMENTS ===
-    "ECOG": ["ecog", "ecog performance status", "ecog score", "performance status"],
-    "ECOG_TIMING": ["ecog at screening", "ecog at baseline", "ecog assessment"],
-    "ECG": ["ecg", "electrocardiogram", "ekg", "12-lead ecg"],
-    "ECG_QT": ["qt interval", "qtc", "qtcf", "qtcb", "corrected qt"],
-    "ECG_RHYTHM": ["ecg rhythm", "sinus rhythm", "arrhythmia", "atrial fibrillation"],
-    "RECIST": ["recist", "recist criteria", "tumor response", "measurable disease"],
+    # === INFECTIOUS DISEASE ===
+    "HIV": ["hiv", "human immunodeficiency virus", "hiv test"],
+    "HEPATITIS_B": ["hepatitis b", "hbv", "hbsag", "hepatitis b surface antigen"],
+    "HEPATITIS_C": ["hepatitis c", "hcv", "hepatitis c antibody"],
+    "TB": ["tuberculosis", "tb", "ppd", "quantiferon"],
+    "COVID": ["covid", "covid-19", "sars-cov-2", "coronavirus"],
+    "VACCINATION": ["vaccination", "immunization", "vaccine"],
+    "VACCINATION_COVID": ["covid vaccine", "covid-19 vaccination"],
+    "VACCINATION_INFLUENZA": ["flu vaccine", "influenza vaccine"],
+    "VACCINATION_LIVE": ["live vaccine", "live attenuated vaccine"],
     
-    # === DOCUMENT STRUCTURE ===
-    "STUDY_POPULATION": ["study population", "participant selection", "patient population"],
-    "INCLUSION_CRITERIA": ["inclusion criteria", "patient inclusion", "inclusion requirements"],
-    "EXCLUSION_CRITERIA": ["exclusion criteria", "patient exclusion", "exclusion requirements"],
-    "OBJECTIVES": ["study objectives", "trial objectives", "aims"],
-    "PRIMARY_OBJECTIVE": ["primary objective", "primary aim", "main objective"],
-    "SECONDARY_OBJECTIVE": ["secondary objective", "secondary aim"],
-    "ENDPOINTS": ["endpoints", "outcome measures", "study outcomes"],
-    "PRIMARY_ENDPOINT": ["primary endpoint", "primary outcome"],
-    "SECONDARY_ENDPOINT": ["secondary endpoint", "secondary outcome"],
-    "STUDY_DESIGN": ["study design", "trial design", "design overview"],
-    "ADVERSE_EVENTS": ["adverse events", "safety", "adverse reactions", "side effects"],
-    "SAFETY_ASSESSMENTS": ["safety assessments", "safety evaluations", "safety monitoring"],
-    "SCHEDULE_OF_ACTIVITIES": ["schedule of activities", "soa", "visit schedule"],
-    "STATISTICAL_METHODS": ["statistical analysis", "statistical methods", "sample size"],
-    "INFORMED_CONSENT_SECTION": ["informed consent", "consent process", "icf"],
-    "DISCONTINUATION": ["discontinuation", "withdrawal criteria", "early termination"],
+    # === CARDIAC ===
+    "ECG": ["ecg", "ekg", "electrocardiogram"],
+    "QTC_INTERVAL": ["qtc", "qtc interval", "corrected qt"],
+    "QTC_PROLONGATION": ["qtc prolongation", "prolonged qtc", "long qt"],
+    "EJECTION_FRACTION": ["ejection fraction", "lvef", "ef"],
+    "TROPONIN": ["troponin", "cardiac troponin", "troponin i", "troponin t"],
+    "BNP": ["bnp", "brain natriuretic peptide", "nt-probnp"],
+    "ECHOCARDIOGRAM": ["echocardiogram", "echo", "transthoracic echo", "tte"],
+    "STRESS_TEST": ["stress test", "exercise stress test", "cardiac stress"],
+    "HOLTER_MONITOR": ["holter monitor", "ambulatory ecg", "24-hour ecg"],
+    "CARDIAC_CATHETERIZATION": ["cardiac catheterization", "cardiac cath", "angiography"],
+    
+    # === IMAGING ===
+    "CHEST_XRAY": ["chest x-ray", "chest radiograph", "cxr"],
+    "CT_SCAN": ["ct scan", "computed tomography", "ct imaging"],
+    "MRI": ["mri", "magnetic resonance imaging"],
+    "PET_SCAN": ["pet scan", "positron emission tomography"],
+    "ULTRASOUND": ["ultrasound", "sonography", "us"],
+    "MAMMOGRAM": ["mammogram", "mammography", "breast imaging"],
+    "DEXA_SCAN": ["dexa scan", "bone density", "dxa"],
+    
+    # === ONCOLOGY ===
+    "TUMOR_SIZE": ["tumor size", "lesion size", "mass size"],
+    "TUMOR_STAGE": ["tumor stage", "cancer stage", "tnm stage"],
+    "TUMOR_GRADE": ["tumor grade", "histologic grade"],
+    "TUMOR_MARKER": ["tumor marker", "cancer marker", "tumor antigen"],
+    "CEA": ["cea", "carcinoembryonic antigen"],
+    "CA125": ["ca-125", "ca 125", "cancer antigen 125"],
+    "CA199": ["ca 19-9", "ca 199", "cancer antigen 19-9"],
+    "AFP": ["afp", "alpha-fetoprotein"],
+    "METASTASIS": ["metastasis", "metastatic disease", "distant spread"],
+    "RECURRENCE": ["recurrence", "disease recurrence", "tumor recurrence"],
+    "PERFORMANCE_STATUS": ["performance status", "ecog", "karnofsky"],
+    
+    # === PROCEDURES ===
+    "BIOPSY": ["biopsy", "tissue sample", "histopathology"],
+    "SURGERY": ["surgery", "surgical procedure", "operation"],
+    "CHEMOTHERAPY": ["chemotherapy", "chemo", "cytotoxic therapy"],
+    "RADIATION": ["radiation therapy", "radiotherapy", "radiation treatment"],
+    "IMMUNOTHERAPY": ["immunotherapy", "immune checkpoint inhibitor"],
+    "DIALYSIS": ["dialysis", "hemodialysis", "peritoneal dialysis"],
+    "TRANSFUSION": ["transfusion", "blood transfusion"],
+    
+    # === PSYCHIATRIC ===
+    "DEPRESSION": ["depression", "major depressive disorder", "mdd"],
+    "ANXIETY": ["anxiety", "anxiety disorder", "gad"],
+    "BIPOLAR": ["bipolar", "bipolar disorder", "manic depression"],
+    "SCHIZOPHRENIA": ["schizophrenia", "psychotic disorder"],
+    "PTSD": ["ptsd", "post-traumatic stress disorder"],
+    "SUICIDAL_IDEATION": ["suicidal ideation", "suicidal thoughts", "suicide risk"],
+    
+    # === NEUROLOGICAL ===
+    "SEIZURE": ["seizure", "epilepsy", "convulsion"],
+    "STROKE": ["stroke", "cerebrovascular accident", "cva"],
+    "DEMENTIA": ["dementia", "alzheimer", "cognitive impairment"],
+    "PARKINSONS": ["parkinson", "parkinsons disease"],
+    "NEUROPATHY": ["neuropathy", "peripheral neuropathy", "nerve damage"],
+    
+    # === STUDY-SPECIFIC ===
+    "WASHOUT_PERIOD": ["washout period", "washout duration"],
+    "PROHIBITED_MEDICATION": ["prohibited medication", "excluded medication", "forbidden drug"],
+    "CONCOMITANT_MEDICATION": ["concomitant medication", "concurrent medication"],
+    "PRIOR_THERAPY": ["prior therapy", "previous treatment", "prior treatment"],
+    "DEVICE_IMPLANT": ["implanted device", "medical device", "implant"],
+    "ALLERGY": ["allergy", "allergic reaction", "hypersensitivity"],
+    "ADVERSE_EVENT": ["adverse event", "ae", "adverse reaction"],
 }
 
-print(f"Loaded {len(CATEGORY_DEFINITIONS)} categories from standard team requirements")
+print(f"Loaded {len(CATEGORY_DEFINITIONS)} category definitions")
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC # Build Category Prototypes
+# MAGIC # Load Test Data
 
 # COMMAND ----------
 
-def build_prototypes(embed_fn):
-    """Build category prototypes using given embedding function."""
-    labels = []
-    prototypes = []
-    for category, synonyms in CATEGORY_DEFINITIONS.items():
-        embs = embed_fn(synonyms)
-        proto = embs.mean(axis=0)
-        proto = proto / np.linalg.norm(proto)
-        labels.append(category)
-        prototypes.append(proto)
-    return labels, np.stack(prototypes)
+# NOTE: In production, this would load from your clinical trial protocol dataset
+# For this demonstration, we'll use synthetic test cases
 
-print("Building prototypes for each model...")
-labels_sap, protos_sap = build_prototypes(embed_sapbert)
-labels_pub, protos_pub = build_prototypes(embed_pubmed)
-labels_dual, protos_dual = build_prototypes(embed_dual)
-print(f"Built prototypes for {len(labels_sap)} categories")
+def load_test_data() -> List[Dict]:
+    """
+    Load test cases from protocol documents.
+    In production, this reads from your document extraction pipeline.
+    """
+    # Placeholder - replace with actual data loading
+    test_cases = [
+        {
+            "document_id": "PROTOCOL_001",
+            "text": "Subjects must have a BMI between 18.5 and 30 kg/m²",
+            "ground_truth": "BMI_RANGE",
+            "type": "short"
+        },
+        # Add more test cases from your dataset
+    ]
+    return test_cases
 
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC # Load the team's 91 Protocol Documents
-
-# COMMAND ----------
-
-# 91 test protocols
-TEST_PROTOCOL_IDS = [
-    "PRO00031720", "PRO00031767", "PRO00031814", "PRO00032231", "PRO00032574", 
-    "PRO00032782", "PRO00032795", "PRO00033629", "PRO00040027", "PRO00041923", 
-    "PRO00042322", "PRO00042489", "PRO00042642", "PRO00043043", "PRO00043392", 
-    "PRO00043470", "PRO00044090", "PRO00044744", "PRO00045171", "PRO00045520", 
-    "PRO00045742", "PRO00045831", "PRO00045868", "PRO00045959", "PRO00047228", 
-    "PRO00047313", "PRO00047500", "PRO00048064", "PRO00048461", "PRO00048540", 
-    "PRO00048623", "PRO00049546", "PRO00050275", "PRO00050388", "PRO00051023", 
-    "PRO00051089", "PRO00052298", "PRO00054008", "PRO00054752", "PRO00055683", 
-    "PRO00056909", "PRO00057334", "PRO00057410", "PRO00057520", "PRO00058173", 
-    "PRO00059175", "PRO00059536", "PRO00060414", "PRO00061037", "PRO00061963", 
-    "PRO00063092", "PRO00063375", "PRO00064017", "PRO00064446", "PRO00064555", 
-    "PRO00065263", "PRO00065371", "PRO00066019", "PRO00066459", "PRO00066518", 
-    "PRO00067239", "PRO00067295", "PRO00067390", "PRO00067485", "PRO00068546", 
-    "PRO00068874", "PRO00068993", "PRO00069703", "PRO00071169", "PRO00071865", 
-    "PRO00071983", "PRO00072221", "PRO00072233", "PRO00072915", "PRO00073042", 
-    "PRO00073846", "PRO00074091", "PRO00074461", "PRO00074527", "PRO00074629", 
-    "PRO00075000", "PRO00075429", "PRO00077885", "PRO00078287", "PRO00078536", 
-    "PRO00078669", "PRO00079960", "PRO00081136", "PRO00081211", "PRO00081261", 
-    "PRO00081532"
-]
-
-print(f"Loading the team's {len(TEST_PROTOCOL_IDS)} protocol IDs...")
-
-# Get PDF paths from test storage
-protocol_list = "'" + "','".join(TEST_PROTOCOL_IDS) + "'"
-
-docs_df = spark.sql(f"""
-    SELECT 
-        protocol_id,
-        path,
-        title
-    FROM dev_clinical.doc_test.documents
-    WHERE protocol_id IN ({protocol_list})
-      AND path IS NOT NULL
-""")
-
-doc_count = docs_df.count()
-print(f"Found {doc_count} documents in the test dataset")
+# Load test data
+test_cases = load_test_data()
+print(f"Loaded {len(test_cases)} test cases")
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC # Extract Sections with Type Classification (Short/Long/Ambiguous)
+# MAGIC # Precompute Category Embeddings
 
 # COMMAND ----------
 
-docs_pdf = docs_df.toPandas()
+# Embed all category definitions
+category_texts = []
+category_labels = []
 
-print(f"\nExtracting sections from {len(docs_pdf)} PDFs...")
+for cat, phrases in CATEGORY_DEFINITIONS.items():
+    for phrase in phrases:
+        category_texts.append(phrase)
+        category_labels.append(cat)
 
-test_cases = []  # Will hold (text, expected_category, case_type)
+print(f"Embedding {len(category_texts)} category phrases...")
 
-for idx, row in docs_pdf.iterrows():
-    try:
-        pdf_path = row['path']
-        if pdf_path.startswith("dbfs:/Volumes/"):
-            pdf_path = "/" + pdf_path.replace("dbfs:/", "")
-        elif pdf_path.startswith("dbfs:"):
-            pdf_path = pdf_path.replace("dbfs:", "/dbfs")
-        
-        doc = fitz.open(pdf_path)
-        
-        for page_num in range(min(15, len(doc))):  # First 15 pages
-            page = doc[page_num]
-            blocks = page.get_text("dict")["blocks"]
-            
-            for block in blocks:
-                if "lines" in block:
-                    for line in block["lines"]:
-                        text = "".join([span["text"] for span in line["spans"]]).strip()
-                        
-                        if not text or len(text) < 3:
-                            continue
-                        
-                        word_count = len(text.split())
-                        avg_font_size = sum([span.get("size", 12) for span in line["spans"]]) / len(line["spans"])
-                        is_bold = any(["bold" in span.get("font", "").lower() for span in line["spans"]])
-                        
-                        # Determine case type based on characteristics
-                        if word_count <= 5 and (is_bold or text.isupper() or text.istitle() or avg_font_size >= 11):
-                            case_type = "short"
-                        elif word_count >= 15:
-                            case_type = "long"
-                        elif 5 < word_count < 15:
-                            case_type = "ambiguous"
-                        else:
-                            continue
-                        
-                        # Try to determine expected category by matching against known patterns
-                        text_lower = text.lower()
-                        expected_category = None
-                        
-                        for category, synonyms in CATEGORY_DEFINITIONS.items():
-                            for syn in synonyms:
-                                if syn.lower() in text_lower:
-                                    expected_category = category
-                                    break
-                            if expected_category:
-                                break
-                        
-                        # Only include if we can determine expected category (for accuracy measurement)
-                        if expected_category:
-                            test_cases.append({
-                                "text": text,
-                                "expected": expected_category,
-                                "type": case_type,
-                                "document_id": row['protocol_id'],
-                                "page_num": page_num + 1,
-                                "word_count": word_count
-                            })
-        
-        doc.close()
-        
-        if (idx + 1) % 20 == 0:
-            print(f"  Processed {idx + 1}/{len(docs_pdf)} documents, {len(test_cases)} test cases found...")
-            
-    except Exception as e:
-        print(f"  Error processing {row['protocol_id']}: {str(e)[:50]}")
-        continue
+# Get embeddings for all three approaches
+sap_cat_embs = embed_sapbert(category_texts)
+pub_cat_embs = embed_pubmed(category_texts)
+dual_cat_embs = embed_dual(category_texts)
 
-print(f"\nExtracted {len(test_cases)} test cases with ground truth labels")
-
-# Summarize by type
-test_df = pd.DataFrame(test_cases)
-print(f"\nTest cases by type:")
-print(test_df['type'].value_counts())
+print("Category embeddings computed")
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC # Run Classification Comparison
+# MAGIC # Run Comparison
 
 # COMMAND ----------
 
-def classify(text: str, embed_fn, prototypes: np.ndarray, labels: List[str]) -> Tuple[str, float]:
-    emb = embed_fn([text])[0]
-    scores = prototypes @ emb
-    best_idx = np.argmax(scores)
-    return labels[best_idx], float(scores[best_idx])
-
-print(f"Classifying {len(test_cases)} test cases with 3 models...")
-start_time = time.time()
+def predict_category(text_embedding: np.ndarray, cat_embeddings: np.ndarray) -> Tuple[str, float]:
+    """Return predicted category and confidence score."""
+    similarities = text_embedding @ cat_embeddings.T
+    best_idx = similarities.argmax()
+    return category_labels[best_idx], similarities[best_idx]
 
 results = []
 
-for idx, tc in enumerate(test_cases):
+for tc in test_cases:
     text = tc["text"]
-    expected = tc["expected"]
-    case_type = tc["type"]
+    ground_truth = tc["ground_truth"]
     
-    # SapBERT only
-    sap_label, sap_conf = classify(text, embed_sapbert, protos_sap, labels_sap)
-    sap_correct = sap_label == expected
+    # Get embeddings for test text
+    sap_emb = embed_sapbert([text])[0]
+    pub_emb = embed_pubmed([text])[0]
+    dual_emb = embed_dual([text])[0]
     
-    # PubMedBERT only
-    pub_label, pub_conf = classify(text, embed_pubmed, protos_pub, labels_pub)
-    pub_correct = pub_label == expected
-    
-    # Dual (70/30)
-    dual_label, dual_conf = classify(text, embed_dual, protos_dual, labels_dual)
-    dual_correct = dual_label == expected
+    # Predict with each approach
+    sap_pred, sap_conf = predict_category(sap_emb, sap_cat_embs)
+    pub_pred, pub_conf = predict_category(pub_emb, pub_cat_embs)
+    dual_pred, dual_conf = predict_category(dual_emb, dual_cat_embs)
     
     results.append({
-        "text": text[:60] + "..." if len(text) > 60 else text,
-        "expected": expected,
-        "type": case_type,
         "document_id": tc["document_id"],
-        "sap_label": sap_label,
-        "sap_conf": round(sap_conf, 3),
-        "sap_correct": sap_correct,
-        "pub_label": pub_label,
-        "pub_conf": round(pub_conf, 3),
-        "pub_correct": pub_correct,
-        "dual_label": dual_label,
-        "dual_conf": round(dual_conf, 3),
-        "dual_correct": dual_correct,
+        "text": text,
+        "type": tc["type"],
+        "ground_truth": ground_truth,
+        "sap_pred": sap_pred,
+        "sap_conf": float(sap_conf),
+        "sap_correct": sap_pred == ground_truth,
+        "pub_pred": pub_pred,
+        "pub_conf": float(pub_conf),
+        "pub_correct": pub_pred == ground_truth,
+        "dual_pred": dual_pred,
+        "dual_conf": float(dual_conf),
+        "dual_correct": dual_pred == ground_truth,
     })
-    
-    if (idx + 1) % 500 == 0:
-        print(f"  Processed {idx + 1}/{len(test_cases)}...")
 
-elapsed = time.time() - start_time
 df = pd.DataFrame(results)
-print(f"\nClassification complete in {elapsed:.1f}s")
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC # Results Analysis
+# MAGIC # Overall Accuracy
 
 # COMMAND ----------
 
-print("DETAILED RESULTS (Sample)")
-
-for _, row in df.head(20).iterrows():
-    print(f"\n[{row['type'].upper()}] {row['text']}")
-    print(f"  Expected: {row['expected']}")
-    print(f"  SapBERT:   {row['sap_label']:30} conf={row['sap_conf']:.3f} {'Yes' if row['sap_correct'] else 'No'}")
-    print(f"  PubMedBERT:{row['pub_label']:30} conf={row['pub_conf']:.3f} {'Yes' if row['pub_correct'] else 'No'}")
-    print(f"  Dual:      {row['dual_label']:30} conf={row['dual_conf']:.3f} {'Yes' if row['dual_correct'] else 'No'}")
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC # Summary Statistics
-
-# COMMAND ----------
-
-print("ACCURACY SUMMARY")
-
-# Overall accuracy
+# Calculate accuracy
 sap_acc = df['sap_correct'].mean() * 100
 pub_acc = df['pub_correct'].mean() * 100
 dual_acc = df['dual_correct'].mean() * 100
@@ -558,14 +496,14 @@ MARGINAL BENEFIT
 
 The dual approach shows +{delta_dual_vs_sap:.1f}% accuracy improvement.
 
-This is a marginal gain that may not justify the added complexity.
+This is a marginal gain that requires evaluation of accuracy vs complexity trade-off.
 
 Options:
 1. Keep dual if accuracy is critical
-2. Use SapBERT-only for simplicity (the team's preference)
+2. Use SapBERT-only for simplicity
 3. Use dual only for ambiguous/long sections (hybrid approach)
 
-Recommend: Discuss trade-off with the team.
+Recommend: Evaluate based on production requirements.
 """)
 else:
     print(f"""
@@ -586,7 +524,7 @@ Recommend: Use SapBERT-only.
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC # Export Data for PDF Report Generation
+# MAGIC # Export Data for Report Generation
 
 # COMMAND ----------
 
@@ -627,9 +565,9 @@ print(report_data)
 
 results_df = spark.createDataFrame(df)
 results_df.write.format("delta").option("mergeSchema", "true").mode("overwrite").saveAsTable(
-    "dev_clinical.doc_test.model_comparison_results"
+    "clinical_demo.nlp_analysis.model_comparison_results"
 )
-print("Results saved to dev_clinical.doc_test.model_comparison_results")
+print("Results saved to clinical_demo.nlp_analysis.model_comparison_results")
 
 # COMMAND ----------
 

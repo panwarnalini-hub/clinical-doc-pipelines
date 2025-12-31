@@ -36,7 +36,6 @@
 #
 # This pipeline will ingest documents automatically using Autoloader directly from governed S3 storage (read-only). 
 # The Autoloader section below is commented out during development 
-# because we are testing extraction on selected sample documents.
 
 # COMMAND ----------
 

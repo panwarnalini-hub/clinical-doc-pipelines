@@ -66,6 +66,7 @@ Two composable pipelines that process clinical trial protocols:
 
 ![NER Results](extraction_ner/outputs/ner_visualization.png)
 
+
 ## Project Structure
 
 ```
@@ -78,46 +79,36 @@ clinical-doc-pipelines/
 │   │   ├── 02_structure_sections.py
 │   │   ├── 03a_embeddings.py
 │   │   └── 03b_classification.py
+│   ├── gold/
+│   │   └── 04_gold_classified_sections.py
 │   ├── models/
 │   │   └── model_comparison.py
-│   ├── outputs/
-│   │   └── Model_Comparison_Report.md
-│   └── tests/
+│   └── outputs/
+│       └── Model_Comparison_Report.md
 │
 ├── extraction_ner/                  # Pipeline 2: Entity Extraction
 │   ├── bronze_from_classification/
+│   │   └── README.md                # No code - consumes classification Gold
 │   ├── silver/
 │   │   └── 01_apply_ner.py
 │   ├── gold/
-│   │   └── 02_write_entities.py
-│   ├── training/                    # Separate from medallion DAG
-│   │   ├── 01_convert_annotations.py
-│   │   └── 02_train_model.py
-│   ├── models/
-│   │   └── sapbert_ner/
-│   ├── data/
+│   │   └── 02_entity_analytics.py
 │   └── outputs/
 │
-├── shared/                          # Common utilities
-│   ├── schemas/
-│   │   └── entity_types.py
-│   ├── utils/
-│   │   ├── embeddings.py
-│   │   └── docling_extractor.py
-│   └── config/
-│       └── settings.py
-│
-├── databricks/                      # Orchestration
-│   ├── workflows/
-│   │   ├── ingestion_classification.yml
-│   │   └── extraction_ner.yml
-│   ├── notebooks/
-│   │   └── demo.py
-│   └── install_doc_tools.sh
+├── training/                        # NER Model Training (Local - Not Databricks)
+│   ├── 01_convert_annotations.py
+│   ├── 02_train_model.py
+│   ├── 03_test_local.py
+│   ├── data/                        # Label Studio annotations (gitignored)
+│   ├── models/                      # Trained model artifacts (gitignored)
+│   └── tests/
+│       ├── test_api.py
+│       └── test_ner.py
 │
 ├── app.py                           # Streamlit demo
 ├── requirements.txt
 └── README.md
+```
 ```
 
 ## Tech Stack
@@ -184,7 +175,7 @@ Source Documents (PDF, DOCX)
           │
           ▼
 ┌─────────────────────┐
-│  Silver: Classify   │  Cosine similarity to 87 categories
+│  Silver: Classify   │  Cosine similarity to 87 categories (might increase as i find more)
 │  sections           │
 └─────────┬───────────┘
           │
