@@ -210,6 +210,12 @@ Source Documents (PDF, DOC, DOCX, RTF)
 └─────────────────────┘
 ```
 
+## About
+
+This project was independently developed by Nalini Panwar as a demonstration of production-grade data engineering and biomedical NLP capabilities.
+
+All code, architecture decisions, and implementation details are original work completed December 2025.
+
 ## Author
 
 **Nalini Panwar**  
@@ -218,4 +224,6 @@ December 2025
 
 ## License
 
-MIT License
+MIT License - Copyright (c) 2025 Nalini Panwar
+
+See [LICENSE](LICENSE) file for details.
