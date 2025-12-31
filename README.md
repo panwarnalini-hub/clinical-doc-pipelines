@@ -95,6 +95,7 @@ clinical-doc-pipelines/
 │   ├── gold/
 │   │   └── 02_entity_analytics.py
 │   └── outputs/
+│       └── ner_visualization.png
 │
 ├── training/                        # NER Model Training (Local - Not Databricks)
 │   ├── 01_convert_annotations.py
