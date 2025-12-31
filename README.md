@@ -165,7 +165,7 @@ databricks jobs run-now --job-id <extraction_ner_job_id>
 ## Data Flow
 
 ```
-Source Documents (PDF, DOCX)
+Source Documents (PDF, DOC, DOCX, RTF)
          │
          ▼
 ┌─────────────────────┐
