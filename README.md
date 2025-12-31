@@ -24,7 +24,7 @@ Two composable pipelines that process clinical trial protocols:
 
 **2. Pipeline Composition**
 - NER pipeline consumes classification output
-- No duplicate ingestion: `ingestion_classification/gold → extraction_ner/bronze`
+- No duplicate ingestion: `ingestion_classification/gold - extraction_ner/bronze`
 
 **3. Training Separation**
 - ML training is not part of the medallion data path
@@ -85,6 +85,7 @@ clinical-doc-pipelines/
 │   │   └── model_comparison.py
 │   └── outputs/
 │       └── Model_Comparison_Report.md
+│       └── Model_Comparison_Report.pdf
 │
 ├── extraction_ner/                  # Pipeline 2: Entity Extraction
 │   ├── bronze_from_classification/
@@ -108,7 +109,6 @@ clinical-doc-pipelines/
 ├── app.py                           # Streamlit demo
 ├── requirements.txt
 └── README.md
-```
 ```
 
 ## Tech Stack
@@ -175,7 +175,7 @@ Source Documents (PDF, DOCX)
           │
           ▼
 ┌─────────────────────┐
-│  Silver: Classify   │  Cosine similarity to 87 categories (might increase as i find more)
+│  Silver: Classify   │  Cosine similarity to 87 categories
 │  sections           │
 └─────────┬───────────┘
           │
